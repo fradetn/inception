@@ -9,7 +9,7 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
-      - docker-network
+      - inception
 
   wordpress:
     build: ./requirements/wordpress
@@ -19,7 +19,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     networks:
-      - docker-network
+      - inception
     depends_on:
       - mariadb
 
@@ -30,16 +30,20 @@ services:
     ports:
       - "443:443"
     networks:
-      - docker-network
+      - inception
     depends_on:
       - wordpress
 
 volumes:
   mariadb_data:
     driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/mariadb
+      o: bind
   wordpress_data:
     driver: local
 
 networks:
-  docker-network:
+  inception:
     driver: bridge
