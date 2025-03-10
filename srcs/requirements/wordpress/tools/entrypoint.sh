@@ -15,11 +15,8 @@ sleep 10
 cd /var/www/html
 
 # Afficher le contenu du répertoire pour le débogage
-echo "test begin"
-ls -a
 #ls -la /var/www/html
 #ls -la usr/local/bin
-echo "test end"
 
 echo "DB_NAME=${DB_NAME}"
 echo "DB_USER=${DB_USER}"
@@ -69,7 +66,8 @@ else
   echo "User $WP_USER already exists, skipping creation."
 fi
 
-ls -a /usr/sbin
+mkdir -p /run/php
+chown -R www-data:www-data /run/php
 
 # Démarrer PHP-FPM
 echo "Starting PHP-FPM..."

@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     php-curl \
     php-exif \
     php-json \
+    sendmail \
     php-mysql \
     php-fileinfo \
     php-mbstring \
@@ -27,19 +28,17 @@ RUN wp --version --allow-root
 # Création du dossier où sera stocké WordPress
 RUN mkdir -p /var/www/html
 
-# installation, extraction de wordpress
+# Installation, extraction de wordpress
 RUN wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz \
     && tar -xzf /tmp/wordpress.tar.gz -C /var/www/html \
     && rm /tmp/wordpress.tar.gz \
     && chown -R www-data:www-data /var/www/html/wordpress
 
-#copie du fichier de conf php
+# Copie du fichier de conf php
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-RUN apt-get update && apt-get install -y sendmail
 
 EXPOSE 9000
 
