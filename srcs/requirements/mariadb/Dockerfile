@@ -1,17 +1,16 @@
-FROM debian:bullseye-slim
+FROM	debian:bullseye
 
-RUN apt-get update && apt-get install -y mariadb-server \
-	&& rm -rf /var/lib/apt/lists/*
+RUN	apt update -y && apt upgrade -y && apt-get install -y mariadb-server mariadb-client
 
-COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
-COPY tools/entrypoint.sh /usr/local/bin/
+#config mariaDB
+COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
-RUN chown -R mysql:mysql /var/lib/mysql \
-	&& chmod -R 750 /var/lib/mysql \
-	&& chmod +x /usr/local/bin/entrypoint.sh \
-	&& echo "entrypoint.sh :" && \
-	ls -l /usr/local/bin/entrypoint.sh
+#script init DB
+COPY	tools/mysql.sh /
+RUN	chmod +x mysql.sh
 
-EXPOSE 3306
+expose	3306
 
-ENTRYPOINT [ "entrypoint.sh" ]
+STOPSIGNAL	SIGQUIT
+
+ENTRYPOINT ["/mysql.sh"]
