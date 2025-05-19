@@ -22,21 +22,31 @@ if [ -n "$MYSQL_DATABASE" ]; then
 		fi
 	fi
 fi
-	# Creation compte Admi
-	wp core install --path=$WP_PATH \
-		--url="${DOMAIN_NAME}" \
-		--title="${TITLE_NAME}" \
-		--admin_user="${ADMIN_USER}" \
-		--admin_password="${ADMIN_PASSWORD}" \
-		--admin_email="admin@mail.com" \
-		--allow-root
+	# Vérifie si WordPress est déjà installé
+	if ! wp core is-installed --path=$WP_PATH --allow-root; then
+		echo "WordPress non installé. Installation en cours..."
+		wp core install --path=$WP_PATH \
+			--url="${DOMAIN_NAME}" \
+			--title="${TITLE_NAME}" \
+			--admin_user="${ADMIN_USER}" \
+			--admin_password="${ADMIN_PASSWORD}" \
+			--admin_email="admin@mail.com" \
+			--allow-root
+	else
+		echo "WordPress est déjà installé."
+	fi
 
-	# Creation 2em utilisateur
-	wp user create "${WP_USER}" "user@mail.com" \
-		--user_pass="${WP_PASSWORD}" \
-		--role="${WP_USER_ROLE:-author}" \
-		--path=$WP_PATH \
-		--allow-root
+	# Vérifie si l'utilisateur secondaire existe déjà
+	if ! wp user get "${WP_USER}" --path=$WP_PATH --allow-root > /dev/null 2>&1; then
+		echo "Création de l'utilisateur ${WP_USER}..."
+		wp user create "${WP_USER}" "user@mail.com" \
+			--user_pass="${WP_PASSWORD}" \
+			--role="${WP_USER_ROLE:-author}" \
+			--path=$WP_PATH \
+			--allow-root
+	else
+		echo "L'utilisateur ${WP_USER} existe déjà."
+	fi
 
 #Lancement de PHP-FPM
 /usr/sbin/php-fpm7.4 -F

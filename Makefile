@@ -6,7 +6,7 @@ all: up
 
 # Démarre les conteneurs en arrière-plan
 up:
-	docker-compose -f $(COMPOSE_FILE) up -d
+	docker-compose -f $(COMPOSE_FILE) up -d --build
 
 # Arrête les conteneurs
 down:

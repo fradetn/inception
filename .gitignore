@@ -1,2 +1,3 @@
 # Ignorer le dossier secrets/
 secrets/
+srcs/.env
